@@ -49,7 +49,7 @@ uint8 PIT_getIntrStatus(void)
 
 void PIT_clear(void)
 {
-	intrFlag = TRUE;
+	intrFlag = FALSE;
 }
 void PIT_IRQHandler(PIT_Timer_t pitTimer)
 {
