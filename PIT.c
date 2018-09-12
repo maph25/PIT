@@ -51,11 +51,6 @@ void PIT_clear(void)
 {
 	intrFlag = FALSE;
 }
-void PIT_IRQHandler(PIT_Timer_t pitTimer)
-{
-	PIT->CHANNEL[pitTimer].TFLG |= PIT_TFLG_TIF_MASK;
-	PIT->CHANNEL[pitTimer].TCTRL;
-	/**Enables PIT timer interrupt**/
-	PIT->CHANNEL[pitTimer].TCTRL &= ~(PIT_TCTRL_TIE_MASK);
-	PIT->CHANNEL[pitTimer].TCTRL &= ~(PIT_TCTRL_TEN_MASK);
-}
+
+ /*funct called from startup_mk64f12.c*/
+void PIT_IRQHandler(PIT_Timer_t pitTimer);
