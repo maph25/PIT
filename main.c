@@ -27,8 +27,9 @@ int main(void) {
 
     while(1) {
     	GPIO_toogle_pin(GPIO_D,BIT0);
-    	pitIntrStatus = PIT_getIntrStutus();
 	PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY);
+    	pitIntrStatus = PIT_getIntrStutus();
+	
 	while(FALSE == pitIntrStatus);
 	GPIO_toogle_pin(GPIO_D,BIT0);
 	PIT_clear();
