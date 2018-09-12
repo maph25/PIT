@@ -28,13 +28,13 @@ int main(void) {
     while(1) {
     	GPIO_toogle_pin(GPIO_D,BIT0);
     	pitIntrStatus = PIT_getIntrStutus();
-		PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY);
-		while(FALSE == pitIntrStatus);
-		GPIO_toogle_pin(GPIO_D,BIT0);
-		PIT_clear();
-		PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY);
-		pitIntrStatus = PIT_getIntrStutus();
-		while(FALSE == pitIntrStatus);
+	PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY);
+	while(FALSE == pitIntrStatus);
+	GPIO_toogle_pin(GPIO_D,BIT0);
+	PIT_clear();
+	PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY);
+	pitIntrStatus = PIT_getIntrStutus();
+	while(FALSE == pitIntrStatus);
     }
     return 0 ;
 }
