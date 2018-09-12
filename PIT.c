@@ -25,6 +25,8 @@ void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float period)
 	cycles = (uint32)cycles;
 	PIT->CHANNEL[pitTimer].LDVAL = decToHexa(cycles);
 	PIT->CHANNEL[pitTimer].TCTRL |= PIT_TCTRL_TIE_MASK | PIT_TCTRL_TEN_MASK;
+	// Enable interrupt registers ISER and ICPR
+	NVIC_EnableIRQ(PIT0_IRQn);
 }
 
 void PIT_clockGating(void)
@@ -35,7 +37,8 @@ void PIT_clockGating(void)
 	/**
 	* Enable portD clock**/
 	GPIO_clockGating(GPIO_D);
-
+	// Turn on PIT
+	PIT->MCR = FALSE;
 }
 
 uint8 PIT_getIntrStutus(void);
