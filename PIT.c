@@ -8,6 +8,8 @@
 #include "MK64F12.h"
 #include "PIT.h"
 
+static uint8 intrFlag = 0;
+
 uint32 decToHexa(uint32 value)
 {
 	uint32 hex = 0;
@@ -23,6 +25,9 @@ void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float period)
 	float clockPeriod = 1/systemClock;
 	float cycles = (period/clockPeriod) - 1;
 	cycles = (uint32)cycles;
+	/**
+	* Turn on PIT**/
+	//PIT->MCR = MCR_ON;
 	PIT->CHANNEL[pitTimer].LDVAL = decToHexa(cycles);
 	/**
 	 * TIE enables interrupts for the timer
@@ -40,6 +45,12 @@ void PIT_clockGating(void)
 	PIT->MCR = MCR_ON;
 }
 
-uint8 PIT_getIntrStutus(void);
+uint8 PIT_getIntrStatus(void)
+{
+	return intrFlag;
+}
 
-void PIT_clear(void);
+void PIT_clear(void)
+{
+	intrFlag = TRUE;
+}
