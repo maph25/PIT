@@ -1,40 +1,61 @@
 /*
- * PIT.h
+ * PIT.c
  *
  *  Created on: Sep 11, 2018
  *      Author: LuisFernando
  */
 
-#ifndef PIT_H_
-#define PIT_H_
+#include "MK64F12.h"
+#include "PIT.h"
 
-#include "DataTypeDefinitions.h"
-/********************************************************************************************/
-/********************************************************************************************/
-/********************************************************************************************/
-/*!
- 	 \brief	 This function configure the PIT to generate a delay base on the system clock.
- 	 Internally it configures the clock gating and enables the PIT module.
- 	 It is important to note that this strictly is not device driver since everything is
- 	 contained in a single function, but in general you have to avoid this practices, this only
- 	 for the propose of the homework
+static uint8 intrFlag = 0;
 
- 	 \param[in]  portName Port to be configured.
- 	 \return void
- */
+uint32 decToHexa(uint32 value)
+{
+	uint32 hex = 0;
+	uint32 base = 0;
+	for(;value;value /= 10, base *= 16)
+		hex += (value%10) * base;
+	return hex;
+}
 
-typedef enum {PIT_0,PIT_1,PIT_2,PIT_3}PIT_Timer_t;
-typedef enum {MCR_ON,MCR_OFF}MCR_State;
-void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float period);
+void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float period)
+{
+	/**Es necesario hacer un cast para pasar del numero float a entero, y de ahi a hexa**/
+	float clockPeriod = 1/systemClock;
+	float cycles = (period/clockPeriod) - 1;
+	cycles = (uint32)cycles;
+	/**
+	* Turn on PIT**/
+	PIT->MCR = MCR_ON;
+	PIT->CHANNEL[pitTimer].LDVAL = decToHexa(cycles);
+	/**
+	 * TIE enables interrupts for the timer
+	 * TEN starts the timer**/
+	PIT->CHANNEL[pitTimer].TCTRL |= PIT_TCTRL_TIE_MASK | PIT_TCTRL_TEN_MASK;
+}
 
-void PIT_clockGating(void);
+void PIT_clockGating(void)
+{
+	/**
+	 * Enable PIT clock**/
+	SIM->SCGC6 |= SIM_SCGC6_PIT_MASK;
+}
 
-uint8 PIT_getIntrStatus(void);
+uint8 PIT_getIntrStatus(void)
+{
+	return intrFlag;
+}
 
-void PIT_clear(void);
-
-uint32 decToHexa(uint32 value);
-
-void PIT_IRQHandler(void);
-
-#endif /* PIT_H_ */
+void PIT_clear(void)
+{
+	intrFlag = TRUE;
+}
+void PIT_IRQHandler(PIT_Timer_t pitTimer)
+{
+	PIT->CHANNEL[pitTimer].TFLG |= PIT_TFLG_TIF_MASK;
+	PIT->CHANNEL[pitTimer].TCTRL;
+	/**Enables PIT timer interrupt**/
+	PIT->CHANNEL[pitTimer].TCTRL &= ~(PIT_TCTRL_TIE_MASK);
+	PIT->CHANNEL[pitTimer].TCTRL &= ~(PIT_TCTRL_TEN_MASK);
+}
