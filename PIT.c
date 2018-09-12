@@ -34,7 +34,9 @@ void PIT_clockGating(void)
 	SIM_SCGC6 |= SIM_SCGC6_PIT_MASK;
 	/**
 	* Enable portD clock**/
-	SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+	GPIO_clockGating(GPIO_D);
+	GPIO_dataDirectionPIN(GPIO_D,GPIO_OUTPUT,BIT0);
+
 }
 
 uint8 PIT_getIntrStutus(void);
