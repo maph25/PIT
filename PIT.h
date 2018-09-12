@@ -35,5 +35,6 @@ void PIT_clear(void);
 
 uint32 decToHexa(uint32 value);
 
+void PIT_IRQHandler(void);
 
 #endif /* PIT_H_ */
