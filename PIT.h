@@ -1,19 +1,14 @@
 /*
  * PIT.h
  *
- *	\author Andrea Perez ie698276@iteso.mx & Fernanda Muñoz ie701371@iteso.mx
- *	\date	11/Sep/2018
+ *  Created on: Sep 11, 2018
+ *      Author: LuisFernando
  */
 
 #ifndef PIT_H_
 #define PIT_H_
 
-#include "Bits.h"
-
-/*! This enumerated constant are used to select the PIT to be used*/
-typedef enum {PIT_0,PIT_1,PIT_2,PIT_3} PIT_Timer_t;
-
-
+#include "DataTypeDefinitions.h"
 /********************************************************************************************/
 /********************************************************************************************/
 /********************************************************************************************/
@@ -27,19 +22,18 @@ typedef enum {PIT_0,PIT_1,PIT_2,PIT_3} PIT_Timer_t;
  	 \param[in]  portName Port to be configured.
  	 \return void
  */
-void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float perior);
 
+typedef enum {PIT_0,PIT_1,PIT_2,PIT_3}PIT_Timer_t;
+typedef enum {MCR_ON,MCR_OFF}MCR_State;
+void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float period);
 
+void PIT_clockGating(void);
 
-void PIT_clock_gating(void);
-
-uint8 PIT_interrupt_flag_status(void);
-
-
-uint8 PIT_get_intr_status(void);
+uint8 PIT_getIntrStatus(void);
 
 void PIT_clear(void);
 
 uint32 decToHexa(uint32 value);
+
 
 #endif /* PIT_H_ */
