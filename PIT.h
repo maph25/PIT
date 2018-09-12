@@ -40,5 +40,6 @@ uint8 PIT_get_intr_status(void);
 
 void PIT_clear(void);
 
+uint32 decToHexa(uint32 value);
 
 #endif /* PIT_H_ */
