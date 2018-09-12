@@ -35,6 +35,7 @@ void PIT_clear(void);
 
 uint32 decToHexa(uint32 value);
 
-void PIT_IRQHandler(void);
+/*Funct called from startup_mk64f12.c*/
+void PIT0_IRQHandler(void);
 
 #endif /* PIT_H_ */
