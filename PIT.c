@@ -35,7 +35,6 @@ void PIT_clockGating(void)
 	/**
 	* Enable portD clock**/
 	GPIO_clockGating(GPIO_D);
-	GPIO_dataDirectionPIN(GPIO_D,GPIO_OUTPUT,BIT0);
 
 }
 
