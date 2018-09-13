@@ -1,10 +1,14 @@
-/*
- * NVIC.c
- *
- * 	\author Andrea Perez ie698276@iteso.mx & Fernanda Muñoz ie701371@iteso.mx
-*	\date	10/Sep/2018
+/**
+	\file
+	\brief
+		This is the source file for the NVIC device driver for Kinetis K64.
+		It contains some configuration functions and runtime functions.
+		It is implemented using  CMSIS Core functions
+	\author J. Luis Pizano Escalante, luispizano@iteso.mx
+	\date	27/07/2015
+	\todo
+	    Pending interrupts and disable interrupts are not enable.
  */
-
 
 #include "NVIC.h"
 

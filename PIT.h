@@ -1,20 +1,15 @@
 /*
  * PIT.h
  *
- *	\author Andrea Perez & Fernanda Muñoz & Luis Fernando Rodriguez
- *	\date	11/Sep/2018
+ *  Created on: Sep 11, 2018
+ *      Author: LuisFernando
  */
 
 #ifndef PIT_H_
 #define PIT_H_
 
-#include "Bits.h"
-
-/*! This enumerated constant are used to select the PIT to be used*/
-typedef enum {PIT_0,PIT_1,PIT_2,PIT_3} PIT_Timer_t;
-typedef enum {MCR_ON, MCR_OFF} MCR_State;
-typedef enum {PIT_FLAG_0, PIT_FLAG_1,PIT_FLAG_2} PIT_Flag_t;
-
+#include "DataTypeDefinitions.h"
+/********************************************************************************************/
 /********************************************************************************************/
 /********************************************************************************************/
 /*!
@@ -27,15 +22,19 @@ typedef enum {PIT_FLAG_0, PIT_FLAG_1,PIT_FLAG_2} PIT_Flag_t;
  	 \param[in]  portName Port to be configured.
  	 \return void
  */
-void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float perior);
 
-void PIT_clock_gating(void);
+typedef enum {PIT_0,PIT_1,PIT_2,PIT_3}PIT_Timer_t;
+typedef enum {MCR_ON,MCR_OFF}MCR_State;
+void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float period);
 
-uint8 PIT_interrupt_flag_status(void);
+void PIT_clockGating(void);
 
-uint8 PIT_get_interrupt_status(void);
+uint8 PIT_getIntrStatus(void);
 
 void PIT_clear(void);
 
+uint32 decToHexa(uint32 value);
+
+void PIT0_IRQHandler(void);
 
 #endif /* PIT_H_ */
