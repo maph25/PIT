@@ -20,10 +20,10 @@ int main(void) {
 	/**GPIO_pinControlRegisterType pinControlRegisterPORTD = GPIO_MUX1;*/
 
 	GPIO_clock_gating(GPIO_D);
-	GPIO_pin_control_register(GPIO_D,BIT0, *pinControlRegister);
+	GPIO_pin_control_register(GPIO_D,BIT0, *GPIO_pin_control_register);
 	GPIO_data_direction_pin(GPIO_D,GPIO_OUTPUT,BIT0);
 	GPIO_toogle_pin(GPIO_D,BIT0);
-	PIT_clockGating();
+	PIT_clock_gating();
 	NVIC_enableInterruptAndPriotity(PIT_CH0_IRQ, PRIORITY_10);
 	EnableInterrupts;
 

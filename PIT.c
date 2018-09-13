@@ -16,7 +16,7 @@ void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float period)
 {
 	/**Es necesario hacer un cast para pasar del numero float a entero, y de ahi a hexa**/
 	float clockPeriod = 1/systemClock;
-	float cycles = (period/clockPeriod) - 1;
+	float cycles = (period/clockPeriod) - ONE;
 	/** Turn on PIT**/
 	PIT->MCR = MCR_ON;
 	PIT->CHANNEL[pitTimer].LDVAL = cycles;
@@ -38,17 +38,17 @@ void PIT_clock_gating(void)
 uint8 PIT_interrupt_flag_status();
 
 
-uint8 PIT_get_interrupt_status(PIT_Timer_t pitTimer,InterruptType InterruptStatus)
+uint8 PIT_get_interrupt_status()
 {
-	PIT->CHANNEL[pitTimer].TFLG |= PIT_TCTRL_TEN_MASK;
-	PIT->CHANNEL[pitTimer].TFLG |= PIT_TCTRL_TIF_MASK;
+	PIT->CHANNEL->TFLG |= PIT_TCTRL_TEN_MASK;
+	PIT->CHANNEL->TFLG |= PIT_TCTRL_TIE_MASK;
+	InterruptStatus = TRUE;
 
 	return InterruptStatus;
 }
 
-void PIT_clear(void)
+void PIT_clear()
 {
-	PIT_TFLG |= PIT_TFLG_TIF_MASK;
 	/**PIT_TCTRL; //read control register for clear PIT flag, this is silicon bug*/
 	PIT_TCTRL &= ~(PIT_TCTRL_TIE_MASK);//enables PIT timer interrupt
 	PIT_TCTRL &= ~(PIT_TCTRL_TEN_MASK);//enables timer0
