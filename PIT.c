@@ -7,6 +7,7 @@
 
 #include "MK64F12.h"
 #include "PIT.h"
+#include "GPIO.h"
 #include "Bits.h"
 #include "NVIC.h"
 
@@ -50,8 +51,8 @@ uint8 PIT_get_interrupt_status()
 void PIT_clear()
 {
 	/**PIT_TCTRL; //read control register for clear PIT flag, this is silicon bug*/
-	PIT_TCTRL &= ~(PIT_TCTRL_TIE_MASK);//enables PIT timer interrupt
-	PIT_TCTRL &= ~(PIT_TCTRL_TEN_MASK);//enables timer0
+	PIT->CHANNEL->TCTRL &= ~(PIT_TCTRL_TIE_MASK);//enables PIT timer interrupt
+	PIT->CHANNEL->TCTRL &= ~(PIT_TCTRL_TEN_MASK);//enables timer0
 	InterruptStatus = FALSE;
 }
 
