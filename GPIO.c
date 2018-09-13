@@ -1,14 +1,40 @@
-/*
- * GPIO.c
- *
- *  Created on: Sep 11, 2018
- *      Author: LuisFernando
+/**
+	\file
+	\brief
+		This is the source file for the GPIO device driver for Kinetis K64.
+		It contains all the implementation for configuration functions and runtime functions.
+		i.e., this is the application programming interface (API) for the GPIO peripheral.
+	\author Andrea Perez ie698276@iteso.mx & Fernanda Muñoz ie701371@iteso.mx
+	\date	11/Sep/2018
  */
-
 #include "MK64F12.h"
 #include "GPIO.h"
+#include "Bits.h"
 
-uint8 GPIO_clockGating(gpio_port_name_t portName)
+
+void GPIO_clear_interrupt(gpio_port_name_t portName)
+{
+	switch(portName)/** Selecting the GPIO for clock enabling*/
+	{
+		case GPIO_A: /** GPIO A is selected*/
+			PORTA->ISFR = CLEAR;
+			break;
+		case GPIO_B: /** GPIO B is selected*/
+			PORTB->ISFR = CLEAR;
+			break;
+		case GPIO_C: /** GPIO C is selected*/
+			PORTC->ISFR = CLEAR;
+			break;
+		case GPIO_D: /** GPIO D is selected*/
+			PORTD->ISFR = CLEAR;
+			break;
+		default: /** GPIO E is selected*/
+			PORTE->ISFR = CLEAR;
+			break;
+
+	}// end switch
+}
+uint8_t GPIO_clock_gating(gpio_port_name_t portName)
 {
 	switch(portName)/** Selecting the GPIO for clock enabling*/
 			{
@@ -34,9 +60,8 @@ uint8 GPIO_clockGating(gpio_port_name_t portName)
 	return(TRUE);
 }// end function
 
-uint8_t GPIO_pinControlRegister(gpio_port_name_t portName, uint8_t pin, GPIO_pinControlRegisterType* pinControlRegister)
+uint8_t GPIO_pin_control_register(gpio_port_name_t portName, uint8_t pin,const gpio_pin_control_register_t*  pinControlRegister)
 {
-
 	switch(portName)
 		{
 		case GPIO_A:/** GPIO A is selected*/
@@ -61,199 +86,186 @@ uint8_t GPIO_pinControlRegister(gpio_port_name_t portName, uint8_t pin, GPIO_pin
 	return(TRUE);
 }
 
-void GPIO_writePORT(gpio_port_name_t portName, uint32 Data )
-{
-	switch(portName)
-		{
-			case GPIO_A:/** GPIOA is selected*/
-				GPIOA->PDOR = Data;
-				break;
-			case GPIO_B:/** GPIOB is selected*/
-				GPIOB->PDOR = Data;
-				break;
-			case GPIO_C:/** GPIOC is selected*/
-				GPIOC->PDOR = Data;
-				break;
-			case GPIO_D:/** GPIOD is selected*/
-				GPIOD->PDOR = Data;
-				break;
-			case GPIO_E: /** GPIOE is selected*/
-				GPIOE->PDOR = Data;
-			default:/**If doesn't exist the option*/
-				break;
-		}
-}
-uint32 GPIO_readPORT(gpio_port_name_t portName)
+void GPIO_write_port(gpio_port_name_t portName, uint32_t data)
 {
 	switch(portName)
 	{
-		case GPIO_A:/** GPIOA is selected*/
-			return(GPIOA->PDIR);
+		case GPIO_A: /**GPIO A is selected*/
+			GPIOA->PDOR = data;
 			break;
-		case GPIO_B:/** GPIOB is selected*/
-			return(GPIOB->PDIR);
+		case GPIO_B: /**GPIO B is selected*/
+			GPIOB->PDOR = data;
 			break;
-		case GPIO_C:/** GPIOC is selected*/
-			return(GPIOC->PDIR);
+		case GPIO_C: /**GPIO C is selected*/
+			GPIOC->PDOR = data;
 			break;
-		case GPIO_D:/** GPIOD is selected*/
-			return(GPIOD->PDIR);
+		case GPIO_D: /**GPIO D is selected*/
+			GPIOD->PDOR = data;
 			break;
-		case GPIO_E: /** GPIOE is selected*/
-			return(GPIOE->PDIR);
-		default:/**If doesn't exist the option*/
-			return(FALSE);
+		case GPIO_E: /**GPIO E is selected*/
+			GPIOE->PDOR = data;
 			break;
 	}
 }
-uint8 GPIO_readPIN(gpio_port_name_t portName, uint8 pin)
+uint32_t GPIO_read_port(gpio_port_name_t portName)
 {
-
 	switch(portName)
 	{
 		case GPIO_A:/** GPIO A is selected*/
-			return((GPIOA->PDIR >> pin) & 0x01);
+			return GPIOA->PDIR;
 			break;
 		case GPIO_B:/** GPIO B is selected*/
-			return((GPIOB->PDIR >> pin) & 0x01);
+			return GPIOB->PDIR;
 			break;
 		case GPIO_C:/** GPIO C is selected*/
-			return((GPIOC->PDIR >> pin) & 0x01);
+			return GPIOC->PDIR;
 			break;
 		case GPIO_D:/** GPIO D is selected*/
-			return((GPIOD->PDIR >> pin) & 0x01);
+			return GPIOD->PDIR;
 			break;
 		case GPIO_E: /** GPIO E is selected*/
-			return((GPIOE->PDIR >> pin) & 0x01);
+			return GPIOE->PDIR;
+		default:/**If doesn't exist the option*/
+			return(FALSE);
+		break;
+	}
+	/**Successful configuration*/
+	return(TRUE);
+}
 
+uint8_t GPIO_read_pin(gpio_port_name_t portName, uint8_t pin)
+{
+	switch(portName)
+	{
+		case GPIO_A:/** GPIO A is selected*/
+			GPIOA->PDDR &=~ (ONE << pin);
+			break;
+		case GPIO_B:/** GPIO B is selected*/
+			GPIOB->PDDR &=~ (ONE << pin);
+			break;
+		case GPIO_C:/** GPIO C is selected*/
+			GPIOC->PDDR &=~ (ONE << pin);
+			break;
+		case GPIO_D:/** GPIO D is selected*/
+			GPIOD->PDDR &=~ (ONE << pin);
+			break;
+		case GPIO_E: /** GPIO E is selected*/
+			GPIOE->PDDR &=~ (ONE << pin);
+			break;
 		default:/**If doesn't exist the option*/
 			return(FALSE);
 			break;
 	}
+	/**Successful configuration*/
+	return(TRUE);
 }
-void GPIO_setPIN(gpio_port_name_t portName, uint8 pin)
+
+void GPIO_set_pin(gpio_port_name_t portName, uint8_t pin)
 {
 	switch(portName)
 	{
-		case GPIO_A:/** GPIO A is selected*/
-			GPIOA->PSOR |= TRUE << pin;
+		case GPIO_A: /**GPIO A is selected*/
+			GPIOA->PSOR |= (ONE << pin);
+			 break;
+		case GPIO_B: /**GPIO B is selected*/
+			GPIOB->PSOR |= (ONE << pin);
+		 	break;
+		case GPIO_C: /**GPIO C is selected*/
+			GPIOC->PSOR |= (ONE << pin);
+			 break;
+		case GPIO_D: /**GPIO D is selected*/
+			GPIOD->PSOR |= (ONE << pin);
 			break;
-		case GPIO_B:/** GPIO B is selected*/
-			GPIOB->PSOR |= TRUE << pin;
-			break;
-		case GPIO_C:/** GPIO C is selected*/
-			GPIOC->PSOR |= TRUE << pin;
-			break;
-		case GPIO_D:/** GPIO D is selected*/
-			GPIOD->PSOR |= TRUE << pin;
-			break;
-		case GPIO_E:/** GPIO E is selected*/
-			GPIOE->PSOR |= TRUE << pin;
-			break;
-		default:
+		case GPIO_E: /**GPIO E is selected*/
+			GPIOE->PSOR |= (ONE << pin);
 			break;
 	}
 }
-void GPIO_clearPIN(gpio_port_name_t portName, uint8 pin)
+
+void GPIO_clear_pin(gpio_port_name_t portName, uint8_t pin)
 {
 	switch(portName)
 	{
-		case GPIO_A:/** GPIO A is selected*/
-			GPIOA->PCOR |= TRUE << pin;
+		case GPIO_A: /**GPIO A is selected*/
+			GPIOA-> PCOR |= (ONE << pin);
+			 break;
+		case GPIO_B: /**GPIO B is selected*/
+			GPIOB-> PCOR |= (ONE << pin);
+		 	break;
+		 case GPIO_C: /**GPIO C is selected*/
+			 GPIOC-> PCOR |= (ONE << pin);
+			 break;
+		 case GPIO_D: /**GPIO D is selected*/
+			 GPIOD-> PCOR |= (ONE << pin);
 			break;
-		case GPIO_B:/** GPIO B is selected*/
-			GPIOB->PCOR |= TRUE << pin;
-			break;
-		case GPIO_C:/** GPIO C is selected*/
-			GPIOC->PCOR |= TRUE  << pin;
-			break;
-		case GPIO_D:/** GPIO D is selected*/
-			GPIOD->PCOR |= TRUE  << pin;
-			break;
-		case GPIO_E:/** GPIO E is selected*/
-			GPIOE->PCOR |= TRUE  << pin;
-			break;
-		default:
-			break;
+		 case GPIO_E: /**GPIO E is selected*/
+			 GPIOE-> PCOR |= (ONE << pin);
+			 break;
 	}
 }
-void GPIO_tooglePIN(gpio_port_name_t portName, uint8 pin)
+
+void GPIO_toogle_pin(gpio_port_name_t portName, uint8_t pin)
 {
 	switch(portName)
 	{
-		case GPIO_A:/** GPIO A is selected*/
-			GPIOA->PTOR |= TRUE << pin;
+		 case GPIO_A: /**GPIO A is selected*/
+			GPIOA-> PTOR = (ONE << pin);
 			break;
-		case GPIO_B:/** GPIO B is selected*/
-			GPIOB->PTOR |= TRUE << pin;
+		 case GPIO_B: /**GPIO B is selected*/
+			 GPIOB-> PTOR = (ONE << pin);
+		 	break;
+		 case GPIO_C: /**GPIO C is selected*/
+			 GPIOC-> PTOR = (ONE << pin);
+			 break;
+		 case GPIO_D: /**GPIO D is selected*/
+			 GPIOD-> PTOR = (ONE << pin);
 			break;
-		case GPIO_C:/** GPIO C is selected*/
-			GPIOC->PTOR |= TRUE << pin;
-			break;
-		case GPIO_D:/** GPIO D is selected*/
-			GPIOD->PTOR |= TRUE << pin;
-			break;
-		case GPIO_E:/** GPIO E is selected*/
-			GPIOE->PTOR |= TRUE << pin;
-			break;
-		default:
-			break;
+		 case GPIO_E: /**GPIO E is selected*/
+			 GPIOE-> PTOR = (ONE << pin);
+			 break;
 	}
 }
-void GPIO_dataDirectionPORT(gpio_port_name_t portName ,uint32 direction)
+
+void GPIO_data_direction_port(gpio_port_name_t portName ,uint32_t direction)
 {
 	switch(portName)
 	{
-		case GPIO_A:/** GPIO A is selected*/
-			GPIOA->PDDR = direction;
-			break;
-		case GPIO_B:/** GPIO B is selected*/
-			GPIOB->PDDR = direction;
-			break;
-		case GPIO_C:/** GPIO C is selected*/
-			GPIOC->PDDR = direction;
-			break;
-		case GPIO_D:/** GPIO D is selected*/
-			GPIOD->PDDR = direction;
-			break;
-		case GPIO_E:/** GPIO E is selected*/
-			GPIOE->PDDR = direction;
-			break;
-		default:
-			break;
+	 	 case GPIO_A: /**GPIO A is selected*/
+	 		GPIOA-> PDDR = direction;
+	 		 break;
+	 	 case GPIO_B: /**GPIO B is selected*/
+	 		GPIOB-> PDDR = direction;
+		 	 break;
+	 	 case GPIO_C: /**GPIO C is selected*/
+	 		GPIOC-> PDDR = direction;
+	 		 break;
+	 	 case GPIO_D: /**GPIO D is selected*/
+	 		GPIOD-> PDDR = direction;
+	 		 break;
+	 	 case GPIO_E: /**GPIO E is selected*/
+	 		GPIOE-> PDDR = direction;
+	 		 break;
 	}
-
 }
-void GPIO_dataDirectionPIN(gpio_port_name_t portName, uint8 State, uint8 pin)
+
+void GPIO_data_direction_pin(gpio_port_name_t portName, uint8_t state, uint8_t pin)
 {
 	switch(portName)
 	{
-		case GPIO_A:/** GPIO A is selected*/
-			GPIOA->PDDR &= ~(TRUE << pin);
-			GPIOA->PDDR |= State << pin;
+		case GPIO_A: /**GPIO A is selected*/
+			GPIOA-> PDDR |= (state << pin);
 			break;
-
-		case GPIO_B:/** GPIO B is selected*/
-			GPIOB->PDDR &= ~(TRUE << pin);
-			GPIOB->PDDR |= State << pin;
+		case GPIO_B: /**GPIO B is selected*/
+			GPIOB-> PDDR |= (state << pin);
 			break;
-
-		case GPIO_C:/** GPIO C is selected*/
-			GPIOC->PDDR &= ~(TRUE << pin);
-			GPIOC->PDDR |= State << pin;
+		case GPIO_C: /**GPIO C is selected*/
+			GPIOC-> PDDR |= (state << pin);
 			break;
-
-		case GPIO_D:/** GPIO D is selected*/
-			GPIOD->PDDR &= ~(TRUE << pin);
-			GPIOD->PDDR |= State << pin;
+		case GPIO_D: /**GPIO D is selected*/
+			GPIOD-> PDDR |= (state << pin);
 			break;
-
-		case GPIO_E:/** GPIO E is selected*/
-			GPIOE->PDDR &= ~(TRUE << pin);
-			GPIOE->PDDR |= State << pin;
-			break;
-
-		default:
+		case GPIO_E: /**GPIO E is selected*/
+			GPIOE-> PDDR |= (state << pin);
 			break;
 	}
 }

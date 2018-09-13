@@ -1,15 +1,22 @@
 /*
  * PIT.h
  *
- *  Created on: Sep 11, 2018
- *      Author: LuisFernando
+ *	\author Andrea Perez & Fernanda Muñoz & Luis Fernando Rodriguez
+ *	\date	11/Sep/2018
  */
 
 #ifndef PIT_H_
 #define PIT_H_
 
-#include "DataTypeDefinitions.h"
-/********************************************************************************************/
+#include "Bits.h"
+
+/*! This enumerated constant are used to select the PIT to be used*/
+typedef enum {PIT_0,PIT_1,PIT_2,PIT_3} PIT_Timer_t;
+typedef enum {MCR_ON, MCR_OFF} MCR_State;
+
+#define SIXTEEN (16u)
+#define TEN (10u)
+
 /********************************************************************************************/
 /********************************************************************************************/
 /*!
@@ -22,19 +29,15 @@
  	 \param[in]  portName Port to be configured.
  	 \return void
  */
+void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float perior);
 
-typedef enum {PIT_0,PIT_1,PIT_2,PIT_3}PIT_Timer_t;
-typedef enum {MCR_ON,MCR_OFF}MCR_State;
-void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float period);
+void PIT_clock_gating(void);
 
-void PIT_clockGating(void);
+uint8 PIT_interrupt_flag_status(void);
 
-uint8 PIT_getIntrStatus(void);
+uint8 PIT_get_interrupt_status(void);
 
 void PIT_clear(void);
 
-uint32 decToHexa(uint32 value);
-
-void PIT0_IRQHandler(void);
 
 #endif /* PIT_H_ */
