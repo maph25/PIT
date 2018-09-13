@@ -35,11 +35,11 @@ int main(void) {
     	pitIntrStatus = PIT_get_interrupt_status();
 		PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY);
 		while(FALSE == pitIntrStatus);
-		GPIO_toogle_pin(GPIO_D,BIT0);
+		/**GPIO_toogle_pin(GPIO_D,BIT0);
 		PIT_clear();
 		PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY);
 		pitIntrStatus = PIT_get_interrupt_status();
-		while(FALSE == pitIntrStatus);
+		while(FALSE == pitIntrStatus);*/
     }
     return 0 ;
 }
