@@ -13,7 +13,9 @@
 /*! This enumerated constant are used to select the PIT to be used*/
 typedef enum {PIT_0,PIT_1,PIT_2,PIT_3} PIT_Timer_t;
 typedef enum {MCR_ON, MCR_OFF} MCR_State;
-typedef enum {PIT_FLAG_0, PIT_FLAG_1,PIT_FLAG_2} PIT_Flag_t;
+
+#define SIXTEEN (16u)
+#define TEN (10u)
 
 /********************************************************************************************/
 /********************************************************************************************/

@@ -17,10 +17,13 @@ uint8 InterruptStatus = FALSE;
 int main(void) {
 
 
-	/**GPIO_pinControlRegisterType pinControlRegisterPORTD = GPIO_MUX1;*/
+/**GPIO_pinControlRegisterType pinControlRegisterPORTD = GPIO_MUX1;*/
+
+	uint8 pitIntrStatus = FALSE;
+	gpio_pin_control_register_t pinControlRegisterPORTD = GPIO_MUX1;
 
 	GPIO_clock_gating(GPIO_D);
-	GPIO_pin_control_register(GPIO_D,BIT0, *GPIO_pin_control_register);
+	GPIO_pin_control_register(GPIO_D,BIT0, &GPIO_pin_control_register);
 	GPIO_data_direction_pin(GPIO_D,GPIO_OUTPUT,BIT0);
 	GPIO_toogle_pin(GPIO_D,BIT0);
 	PIT_clock_gating();
@@ -29,14 +32,14 @@ int main(void) {
 
     while(1) {
     	GPIO_toogle_pin(GPIO_D,BIT0);
-    	InterruptStatus = PIT_get_interrupt_status();
+    	pitIntrStatus = PIT_get_interrupt_status();
 		PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY);
-		while(FALSE == InterruptStatus);
-		GPIO_toogle_pin(GPIO_D,BIT0);
+		while(FALSE == pitIntrStatus);
+		/**GPIO_toogle_pin(GPIO_D,BIT0);
 		PIT_clear();
 		PIT_delay(PIT_0,SYSTEM_CLOCK,DELAY);
-		InterruptStatus = PIT_get_interrupt_status();
-		while(FALSE == InterruptStatus);
+		pitIntrStatus = PIT_get_interrupt_status();
+		while(FALSE == pitIntrStatus);*/
     }
     return 0 ;
 }
