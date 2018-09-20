@@ -3,40 +3,49 @@
  *
  *  Created on: Sep 11, 2018
  *      Author: LuisFernando
+ *      PIT_IRQHandler baasado en Manuel Alejandro obtenido de la pagina de NXP
  */
 
 #include "MK64F12.h"
 #include "PIT.h"
-#include "GPIO.h"
-#include "Bits.h"
-#include "NVIC.h"
+#include "DataTypeDefinitions.h"
 
-static uint8 intrFlag = TRUE;
+static uint8 intrFlag = FALSE;
+//preguntar si esto es valido ya que se utiliza en dos funciones
 
-uint32 decToHexa(uint32 value)
-{
-	uint32 hex = ZERO;
-	uint32 base = ZERO;
-	for(; value ; value /= TEN, base *= SIXTEEN)
-		hex += (value%TEN) * base;
-	return hex;
-}
 
-void PIT_delay(PIT_Timer_t pitTimer,float systemClock ,float period)
+void PIT_delay(PIT_Timer_t pitTimer,ufloat32 systemClock ,ufloat32 period)
 {
 	/**Es necesario hacer un cast para pasar del numero float a entero, y de ahi a hexa**/
-	float clockPeriod = ONE/systemClock;
-	float cycles = (period/clockPeriod) - ONE;
-	cycles = (uint32)cycles;
-	/**
-	* Turn on PIT**/
+	ufloat32 clockPeriod = 0.0F;
+	uint32 cycles = 0;
+	systemClock = systemClock/2;
+	clockPeriod = 1/systemClock;
+	cycles = (uint32)(period/clockPeriod);
+	cycles = cycles - 1;
+
+	PIT->CHANNEL[pitTimer].LDVAL = cycles;
+	PIT_enable_interrupt(pitTimer);
+}
+
+void PIT_enable(void)
+{
 	PIT->MCR = MCR_ON;
-	PIT->CHANNEL[pitTimer].LDVAL = decToHexa(cycles);
+}
+
+void PIT_stop(void)
+{
+	PIT->MCR = MCR_OFF;
+}
+
+void PIT_LDVAL(PIT_Timer_t pitTimer);
+
+void PIT_enable_interrupt(PIT_Timer_t pitTimer)
+{
 	/**
 	 * TIE enables interrupts for the timer
 	 * TEN starts the timer**/
 	PIT->CHANNEL[pitTimer].TCTRL |= PIT_TCTRL_TIE_MASK | PIT_TCTRL_TEN_MASK;
-	intrFlag = FALSE;
 }
 
 void PIT_clock_gating(void)
@@ -54,11 +63,11 @@ uint8 PIT_get_interrupt_status(void)
 
 void PIT_clear(void)
 {
-	intrFlag = TRUE;
+	intrFlag = FALSE;
 }
 /**
  * Funct called from startup_mk64f12.c**/
-void PIT0_IRQ_handler(void)
+void PIT0_IRQHandler(void)
 {
 	PIT->CHANNEL[PIT_0].TFLG |= PIT_TFLG_TIF_MASK;
 	/**
@@ -71,5 +80,6 @@ void PIT0_IRQ_handler(void)
 	PIT->CHANNEL[PIT_0].TCTRL &= ~(PIT_TCTRL_TIE_MASK);
 	/**Enables timer cero**/
 	PIT->CHANNEL[PIT_0].TCTRL &= ~(PIT_TCTRL_TEN_MASK);
+	/****/
+	intrFlag = TRUE;
 }
-

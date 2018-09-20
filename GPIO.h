@@ -1,16 +1,14 @@
-/**
-	\file
-	\brief
-		This is the source file for the GPIO device driver for Kinetis K64.
-		It contains all the implementation for configuration functions and runtime functions.
-		i.e., this is the application programming interface (API) for the GPIO peripheral.
-	\author Andrea Perez ie698276@iteso.mx & Fernanda Muñoz ie701371@iteso.mx
-	\date	11/Sep/2018
+/*
+ * GPIO.h
+ *
+ *  Created on: Sep 11, 2018
+ *      Author: LuisFernando
  */
+
 #ifndef GPIO_H_
 #define GPIO_H_
 
-#include "stdint.h"
+#include "DataTypeDefinitions.h"
 
 
 /** Constant that represent the clock enable for GPIO A */
@@ -24,12 +22,7 @@
 /** Constant that represent the clock enable for GPIO E */
 #define GPIO_CLOCK_GATING_PORTE 0x00002000
 
-/**Value one*/
-#define ONE (1u)
-/**Value zero*/
-#define ZERO 0x00
-/**Clear value*/
-#define CLEAR 0XFFFFFFFF
+
 /** Selects a pullup resistor */
 #define GPIO_PS    0x00000001
 /** Enables the pulldown or pullup resistors*/
@@ -74,8 +67,8 @@
 #define INTR_LOGIC1        0x000C0000
 
 /*! This definition is used to configure whether a pin is an input or an output*/
-typedef enum {GPIO_OUTPUT,/*!< Definition to configure a pin as input */
-			  GPIO_INPUT /*!< Definition to configure a pin as output */
+typedef enum {GPIO_INPUT,/*!< Definition to configure a pin as input */
+			  GPIO_OUTPUT /*!< Definition to configure a pin as output */
 			 }GPIO_PIN_CONFIG;
 /*! These constants are used to select an specific port in the different API functions*/
 typedef enum{GPIO_A, /*!< Definition to select GPIO A */
@@ -83,10 +76,11 @@ typedef enum{GPIO_A, /*!< Definition to select GPIO A */
 			 GPIO_C, /*!< Definition to select GPIO C */
 			 GPIO_D, /*!< Definition to select GPIO D */
 			 GPIO_E, /*!< Definition to select GPIO E */
+			 GPIO_F  /*!< Definition to select GPIO F */
 			} gpio_port_name_t;
 
 /*! This data type is used to configure the pin control register*/
-typedef const uint32_t gpio_pin_control_register_t;
+typedef const uint32_t GPIO_pinControlRegisterType;
 
 
 /********************************************************************************************/
@@ -97,9 +91,12 @@ typedef const uint32_t gpio_pin_control_register_t;
 
  	 \param[in]  portName Port to clear interrupts.
  	 \return void
- 	 */
+ 	 \todo Implement a mechanism to clear interrupts by a specific pin.
+ */
+void GPIO_clearInterrupt(gpio_port_name_t portName);
 
-void GPIO_clear_interrupt(gpio_port_name_t portName);
+
+
 /********************************************************************************************/
 /********************************************************************************************/
 /********************************************************************************************/
@@ -126,7 +123,7 @@ uint8_t GPIO_clock_gating(gpio_port_name_t portName);
  	 gpio_pin_control_register_t PinControlRegister = GPIO_MUX1|GPIO_PS|GPIO_PE;
  	 \return 1 if the portName is valid else return 0
  */
-uint8_t GPIO_pin_control_register(gpio_port_name_t portName, uint8_t pin, gpio_pin_control_register_t* pinControlRegister);
+uint8_t GPIO_pin_control_register(gpio_port_name_t portName, uint8_t pin, GPIO_pinControlRegisterType* pinControlRegister);
 /********************************************************************************************/
 /********************************************************************************************/
 /********************************************************************************************/
@@ -138,7 +135,7 @@ uint8_t GPIO_pin_control_register(gpio_port_name_t portName, uint8_t pin, gpio_p
  	 \return void
 
  */
-void GPIO_data_directionPORT(gpio_port_name_t portName, uint32_t direction);
+void GPIO_dataDirectionPORT(gpio_port_name_t portName ,uint32 direction);
 /********************************************************************************************/
 /********************************************************************************************/
 /********************************************************************************************/
@@ -179,7 +176,7 @@ uint8_t GPIO_read_pin(gpio_port_name_t portName, uint8_t pin);
  	 \param[in] data Value to be written.
  	 \return void
  */
-void GPIO_write_port(gpio_port_name_t portName, uint32_t data);
+void GPIO_write_port(gpio_port_name_t portName, uint32_t Data);
 /********************************************************************************************/
 /********************************************************************************************/
 /********************************************************************************************/
@@ -209,6 +206,6 @@ void GPIO_clear_pin(gpio_port_name_t portName, uint8_t pin);
  	 \param[in] pin Pin to be toggled.
  	 \return void
  */
-void GPIO_tooglePIN(gpio_port_name_t portName, uint8_t pin);
+void GPIO_toogle_pin(gpio_port_name_t portName, uint8_t pin);
 
 #endif /* GPIO_H_ */
